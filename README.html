@@ -3,829 +3,671 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>MBG SMK Informatika CBI</title>
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
 <style>
-
-body{
-background:#f2f5f7;
-font-family:Arial,Helvetica,sans-serif;
-margin:0;
-padding-bottom:80px;
-}
-
-.header{
-background:#198754;
-color:#fff;
-padding:15px;
-text-align:center;
-font-size:22px;
-font-weight:bold;
-position:sticky;
-top:0;
-z-index:999;
-}
-
-.page{
-display:none;
-padding:15px;
-}
-
-.active{
-display:block;
-}
-
-.card{
-border-radius:15px;
-margin-bottom:15px;
-}
-
-.item{
-background:#fff;
-padding:12px;
-margin-top:10px;
-border-radius:10px;
-box-shadow:0 2px 5px rgba(0,0,0,.15);
-}
-
-.bottom{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:#fff;
-display:flex;
-justify-content:space-around;
-padding:8px;
-box-shadow:0 -2px 10px rgba(0,0,0,.15);
-}
-
-.bottom button{
-background:none;
-border:none;
-font-size:13px;
-font-weight:bold;
-}
-
-.stat{
-font-size:24px;
-font-weight:bold;
-color:#198754;
-}
-
+  :root {
+    --primary-color: #198754;
+    --dark-color: #212529;
+    --light-bg: #f4f6f9;
+  }
+  body {
+    background: var(--light-bg);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding-bottom: 40px;
+    transition: all 0.3s;
+  }
+  /* Navbar & Sidebar */
+  .custom-navbar {
+    background: var(--primary-color);
+    color: white;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .menu-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 15px;
+  }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100%;
+    background: var(--dark-color);
+    z-index: 1050;
+    transition: 0.3s ease;
+    padding-top: 20px;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.2);
+  }
+  .sidebar.open {
+    left: 0;
+  }
+  .sidebar-header {
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid #343a40;
+    margin-bottom: 15px;
+  }
+  .sidebar a {
+    padding: 12px 20px;
+    text-decoration: none;
+    font-size: 15px;
+    color: #c2c7d0;
+    display: flex;
+    align-items: center;
+    transition: 0.2s;
+  }
+  .sidebar a i {
+    margin-right: 10px;
+    font-size: 18px;
+  }
+  .sidebar a:hover, .sidebar a.active-menu {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border-left: 4px solid var(--primary-color);
+  }
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1040;
+    display: none;
+  }
+  .sidebar-overlay.show {
+    display: block;
+  }
+  /* Content Styling */
+  .page {
+    display: none;
+    padding: 20px 15px;
+    animation: fadeIn 0.4s ease;
+  }
+  .page.active {
+    display: block;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  .item {
+    background: white;
+    padding: 15px;
+    margin-top: 12px;
+    border-radius: 10px;
+    border-left: 5px solid var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .stat {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+  .footer-copyright {
+    text-align: center;
+    color: #6c757d;
+    font-size: 12px;
+    margin-top: 30px;
+    padding: 10px;
+    border-top: 1px solid #dee2e6;
+  }
 </style>
-
 </head>
-
 <body>
 
-<div class="header">
-🍱 MBG SMK INFORMATIKA CBI
+<div class="custom-navbar">
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="fw-bold fs-5">🍱 MBG INFORMATIKA CBI</div>
 </div>
 
-<!-- ================= DASHBOARD ================= -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">🧭 Navigasi Menu</div>
+  <a href="#" onclick="navTo('dashboard', event)" class="active-menu">🏠 Home Dashboard</a>
+  <a href="#" onclick="navTo('kelas', event)">📦 Data Kelas</a>
+  <a href="#" onclick="navTo('guru', event)">👨‍🏫 Absen Guru Hadir</a>
+  <a href="#" onclick="navTo('bagiGuru', event)">🍱 Bagi Sisa Ompreng</a>
+  <a href="#" onclick="navTo('logistik', event)">📊 Logistik &amp; Stok</a>
+  <a href="#" onclick="navTo('rekap', event)">📋 Rekap &amp; Laporan</a>
+  <a href="#" onclick="navTo('master', event)">⚙️ Master Data</a>
+  <a href="#" onclick="navTo('riwayat', event)">📜 Riwayat Hitung</a>
+</div>
 
 <div id="dashboard" class="page active">
-
-<div class="card p-3">
-
-<h4>Dashboard</h4>
-
-<div class="item">
-Total Pembagian
-<div class="stat" id="totalPembagian">0</div>
+  <div class="card p-4">
+    <h4 class="mb-3 text-dark">Dashboard Ringkasan</h4>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="item">Total Pembagian Kelas <div class="stat" id="totalPembagian">0</div></div>
+      </div>
+      <div class="col-md-4">
+        <div class="item">Total Ompreng Kelas <div class="stat" id="totalOmpreng">0</div></div>
+      </div>
+      <div class="col-md-4">
+        <div class="item">Guru Hadir Hari Ini <div class="stat" id="totalGuru">0</div></div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<div class="item">
-Total Ompreng
-<div class="stat" id="totalOmpreng">0</div>
-</div>
-
-<div class="item">
-Guru Hadir
-<div class="stat" id="totalGuru">0</div>
-</div>
-
-</div>
-
-</div>
-
-<!-- ================= KELAS ================= -->
 
 <div id="kelas" class="page">
+  <div class="card p-4">
+    <h4 class="mb-3">Pembagian Kelas</h4>
+    <label class="form-label">Pilih Kelas</label>
+    <select id="kelasSelect" class="form-select mb-3"></select>
+    
+    <label class="form-label">Jumlah Ompreng</label>
+    <input type="number" id="jumlahOmpreng" class="form-control mb-3" placeholder="Masukkan jumlah ompreng">
+    
+    <button id="btnTambahKelas" class="btn btn-success w-100">Simpan Pembagian</button>
 
-<div class="card p-3">
-
-<h4>Pembagian Kelas</h4>
-
-<select id="kelasSelect" class="form-select">
-
-<option>X PPLG 1</option>
-<option>X PPLG 2</option>
-<option>X PPLG 3</option>
-<option>X PPLG 4</option>
-
-<option>XI PPLG 1</option>
-<option>XI PPLG 2</option>
-<option>XI PPLG 3</option>
-<option>XI PPLG 4</option>
-
-<option>XII PPLG 1</option>
-<option>XII PPLG 2</option>
-<option>XII PPLG 3</option>
-<option>XII PPLG 4</option>
-
-<option>X DKV 1</option>
-<option>X DKV 2</option>
-<option>X DKV 3</option>
-<option>X DKV 4</option>
-
-<option>XI DKV 1</option>
-<option>XI DKV 2</option>
-<option>XI DKV 3</option>
-<option>XI DKV 4</option>
-
-<option>XII DKV 1</option>
-<option>XII DKV 2</option>
-<option>XII DKV 3</option>
-<option>XII DKV 4</option>
-
-<option>Gugus 1</option>
-<option>Gugus 2</option>
-<option>Gugus 3</option>
-<option>Gugus 4</option>
-<option>Gugus 5</option>
-<option>Gugus 6</option>
-<option>Gugus 7</option>
-<option>Gugus 8</option>
-<option>Gugus 9</option>
-
-<option>OSIS & MPK</option>
-
-</select>
-
-<br>
-
-<input
-type="number"
-id="jumlahOmpreng"
-class="form-control"
-placeholder="Jumlah Ompreng">
-
-<button
-id="btnTambahKelas"
-class="btn btn-success mt-3">
-
-Simpan Pembagian
-
-</button>
-
-<hr>
-
-<div id="listKelas"></div>
-
+    <div class="mt-4 p-3 bg-light border rounded">
+      <h5 class="mb-3">📢 Ringkasan Status Kelas</h5>
+      <div class="row text-center g-2">
+        <div class="col"><div class="p-2 bg-secondary bg-opacity-25 rounded text-dark"><small>Belum Input</small><div class="fw-bold fs-5" id="countBelumInput">0</div></div></div>
+        <div class="col"><div class="p-2 bg-warning bg-opacity-25 rounded text-dark"><small>Belum Ambil</small><div class="fw-bold fs-5" id="countBelumAmbil">0</div></div></div>
+        <div class="col"><div class="p-2 bg-danger bg-opacity-25 rounded text-dark"><small>Belum Kembali</small><div class="fw-bold fs-5" id="countBelumKembali">0</div></div></div>
+      </div>
+      <div class="mt-3 text-start style-list" style="font-size: 13px;">
+        <div id="listBelumInput" class="text-secondary-emphasis"><b>Belum Di-input:</b> -</div>
+        <div id="listBelumAmbil" class="text-warning-emphasis mt-1"><b>Belum Di-ambil:</b> -</div>
+        <div id="listBelumKembali" class="text-danger-emphasis mt-1"><b>Belum Kembali:</b> -</div>
+      </div>
+    </div>
+    <hr>
+    <div id="listKelas"></div>
+  </div>
 </div>
 
-</div>
 <div id="guru" class="page">
-
-<div class="card p-3">
-
-<h4>Guru Hadir</h4>
-
-<input
-type="text"
-id="cariGuru"
-class="form-control"
-placeholder="Cari Guru">
-
-<br>
-
-<div id="daftarGuru"></div>
-
-<button
-id="btnSimpanGuru"
-class="btn btn-success mt-3">
-
-Simpan Guru Hadir
-
-</button>
-
+  <div class="card p-4">
+    <h4>Guru Hadir</h4>
+    <input type="text" id="cariGuru" class="form-control mb-3" placeholder="Cari nama guru...">
+    <div id="daftarGuru" style="max-height: 400px; overflow-y: auto;" class="border p-2 bg-light rounded"></div>
+    <button id="btnSimpanGuru" class="btn btn-success w-100 mt-3">Simpan Guru Hadir</button>
+  </div>
 </div>
-
-</div>
-
-<!-- ================= PEMBAGIAN GURU ================= -->
 
 <div id="bagiGuru" class="page">
+  <div class="card p-4">
+    <h4>Pembagian Guru / Tendik</h4>
+    <label class="form-label">Sisa Ompreng Terkini</label>
+    <input type="number" id="sisaOmpreng" class="form-control mb-3" placeholder="Masukkan sisa ompreng">
+    <button class="btn btn-success w-100" id="btnHitung">Hitung Pembagian</button>
 
-<div class="card p-3">
-
-<h4>Pembagian Guru / Tendik</h4>
-
-<label>Sisa Ompreng</label>
-
-<input
-type="number"
-id="sisaOmpreng"
-class="form-control"
-placeholder="Masukkan sisa ompreng">
-
-<button
-class="btn btn-success mt-3"
-id="btnHitung">
-
-Hitung Pembagian
-
-</button>
-
-<hr>
-
-<div id="hasilPembagianGuru"></div>
-
+    <div id="ringkasanGuruBox" class="mt-4 p-3 bg-light border rounded" style="display:none;">
+      <h5>📢 Status Pengambilan &amp; Pengembalian Guru</h5>
+      <div class="row text-center mt-2">
+        <div class="col"><div class="p-2 bg-warning bg-opacity-25 rounded text-dark"><small>Guru Belum Ambil</small><div class="fw-bold fs-5" id="countGuruBelumAmbil">0</div></div></div>
+        <div class="col"><div class="p-2 bg-danger bg-opacity-25 rounded text-dark"><small>Guru Belum Kembali</small><div class="fw-bold fs-5" id="countGuruBelumKembali">0</div></div></div>
+      </div>
+      <div class="mt-3 text-start" style="font-size: 13px;">
+        <div id="listGuruBelumAmbil" class="text-warning-emphasis"><b>Belum Ambil:</b> -</div>
+        <div id="listGuruBelumKembali" class="text-danger-emphasis mt-1"><b>Belum Kembali:</b> -</div>
+      </div>
+    </div>
+    <hr>
+    <div id="hasilPembagianGuru"></div>
+  </div>
 </div>
 
+<div id="logistik" class="page">
+  <div class="card p-4">
+    <h4>Stok &amp; Logistik Ompreng</h4>
+    <div class="mb-3">
+      <label class="form-label">Total Ompreng Masuk Hari Ini (Katering)</label>
+      <input type="number" id="stokMasuk" class="form-control" placeholder="Contoh: 500">
+      <button class="btn btn-success btn-sm mt-2" onclick="simpanStokMasuk()">Simpan Stok Masuk</button>
+    </div>
+    <div class="item bg-light border-0">
+      <h5>Perhitungan Real-time</h5>
+      <table class="table table-bordered mt-2 bg-white">
+        <tr><td>Ompreng Masuk</td><td class="fw-bold text-primary" id="logMasuk">0</td></tr>
+        <tr><td>Terpakai Kelas</td><td class="fw-bold text-danger" id="logKelas">0</td></tr>
+        <tr><td>Sisa Logistik</td><td class="fw-bold text-success" id="logSisa">0</td></tr>
+      </table>
+    </div>
+  </div>
 </div>
 
-<!-- ================= RIWAYAT ================= -->
+<div id="rekap" class="page">
+  <div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4>Rekap Status Harian</h4>
+      <button class="btn btn-outline-primary btn-sm" onclick="muatRekap()">🔄 Refresh</button>
+    </div>
+    <div class="p-3 bg-white border rounded">
+      <h5 class="text-success border-bottom pb-1">📦 Ringkasan Kelas &amp; Catatan</h5>
+      <div id="rekapKelasText" style="font-size:13px; white-space: pre-line; font-family: monospace;">Menghitung...</div>
+      
+      <h5 class="text-success border-bottom pb-1 mt-4">👨‍🏫 Ringkasan Guru</h5>
+      <div id="rekapGuruText" style="font-size:13px; white-space: pre-line; font-family: monospace;">Menghitung...</div>
+    </div>
+  </div>
+</div>
+
+<div id="master" class="page">
+  <div class="card p-4">
+    <h4>⚙️ Pengaturan Master Data</h4>
+    
+    <ul class="nav nav-tabs mt-3" id="masterTabs">
+      <li class="nav-item"><button class="nav-link active" onclick="switchMasterTab('guruTab', event)">Master Guru</button></li>
+      <li class="nav-item"><button class="nav-link" onclick="switchMasterTab('kelasTab', event)">Master Kelas</button></li>
+    </ul>
+
+    <div id="guruTab" class="master-content mt-3">
+      <div class="input-group mb-3">
+        <input type="text" id="namaGuruBaru" class="form-control" placeholder="Nama Guru Baru...">
+        <button class="btn btn-success" onclick="tambahMasterGuru()">Tambah Guru</button>
+      </div>
+      <div id="listMasterGuru" class="border p-2 bg-light rounded" style="max-height: 250px; overflow-y: auto;"></div>
+    </div>
+
+    <div id="kelasTab" class="master-content mt-3" style="display:none;">
+      <div class="input-group mb-3">
+        <input type="text" id="namaKelasBaru" class="form-control" placeholder="Nama Kelas Baru... (Contoh: X PPLG 5)">
+        <button class="btn btn-success" onclick="tambahMasterKelas()">Tambah Kelas</button>
+      </div>
+      <div id="listMasterKelas" class="border p-2 bg-light rounded" style="max-height: 250px; overflow-y: auto;"></div>
+    </div>
+  </div>
+</div>
 
 <div id="riwayat" class="page">
-
-<div class="card p-3">
-
-<h4>Riwayat Pembagian</h4>
-
-<div id="isiRiwayat"></div>
-
-<button
-class="btn btn-danger mt-3"
-id="btnReset">
-
-Reset Semua Data
-
-</button>
-
+  <div class="card p-4">
+    <h4>Riwayat Pembagian</h4>
+    <div id="isiRiwayat"></div>
+    <button class="btn btn-danger w-100 mt-4 py-2 fw-bold" onclick="jalankanResetHarian()">⚠️ Reset Semua Data Transaksi Harian</button>
+  </div>
 </div>
 
-</div>
-
-<!-- ================= MENU ================= -->
-
-<div class="bottom">
-
-<button onclick="showPage('dashboard')">
-🏠<br>Home
-</button>
-
-<button onclick="showPage('kelas')">
-📦<br>Kelas
-</button>
-
-<button onclick="showPage('guru')">
-👨‍🏫<br>Guru
-</button>
-
-<button onclick="showPage('bagiGuru')">
-🍱<br>Bagi
-</button>
-
-<button onclick="showPage('riwayat')">
-📋<br>Riwayat
-</button>
-
+<div class="footer-copyright">
+  &copy; 2026 MBG SMK Informatika CBI. Created by <b>Ilham Maulana</b>. All Rights Reserved.
 </div>
 
 <script>
+// Data Awal Default
+const defaultGuru=["Adi Putra Pamungkas","Agus Hipni Apendi","Ai Rahmawati","Ananda Putri Sutarlan","Anis Sabuh","ARMAN SARI","Cepi Ismail","DEBI HERMAWAN","DEDE SUTIYANAH","Dinda Safitri","Duduh Durahman","Ela Nurlaela","Endin Saepudin","Erdy Herdiawan","Firman Agiansyah","Galuh Ramadhan","Haripan Oktapiana","Hendi Suhendi","Heru","ILHAM MAULANA","Ipda Sulastina","Ir. Ade Ruslan","Irma Maulani","Ismi Fajarina Isnaeni","Kiki Taskiyah","M. RAMADHANY PUTRA. R","M. Rifki Ilham Sani","MUHAMAD FIRMANSYAH","Muhamad Nurhamzah","MUHAMAD RIAN HIDAYAT","MUHAMMAD HENDRY KUSUMA","Nanda Nadia Elisa","Neli Nur Ramdhani","Pepen Parlos Nasution","Prida Kusuma","RAFLY KAEZA RAMADHAN","Ratna Suminar","Robi Mulya Gunawan","Rohman","Rohman Hidayat","Roni Gandi","Siska Ambarwaty Ramdhan","Siti Rohimah","SITI SARAH","TABAH SAPUTRA WIBISONO","Tuti Anggraeni","Widya Khaerul Bariyyah","Winda Sulastri"];
+const defaultKelas=["X PPLG 1","X PPLG 2","X PPLG 3","X PPLG 4","XI PPLG 1","XI PPLG 2","XI PPLG 3","XI PPLG 4","XII PPLG 1","XII PPLG 2","XII PPLG 3","XII PPLG 4","X DKV 1","X DKV 2","X DKV 3","X DKV 4","XI DKV 1","XI DKV 2","XI DKV 3","XI DKV 4","XII DKV 1","XII DKV 2","XII DKV 3","XII DKV 4","Gugus 1","Gugus 2","Gugus 3","Gugus 4","Gugus 5","Gugus 6","Gugus 7","Gugus 8","Gugus 9","OSIS & MPK"];
 
-const daftarGuru=[
+let daftarGuru = JSON.parse(localStorage.getItem("masterGuru")) || defaultGuru;
+let daftarKelas = JSON.parse(localStorage.getItem("masterKelas")) || defaultKelas;
 
-"Adi Putra Pamungkas",
-"Agus Hipni Apendi",
-"Ai Rahmawati",
-"Ananda Putri Sutarlan",
-"Anis Sabuh",
-"ARMAN SARI",
-"Cepi Ismail",
-"DEBI HERMAWAN",
-"DEDE SUTIYANAH",
-"Dinda Safitri",
-"Duduh Durahman",
-"Ela Nurlaela",
-"Endin Saepudin",
-"Erdy Herdiawan",
-"Firman Agiansyah",
-"Galuh Ramadhan",
-"Haripan Oktapiana",
-"Hendi Suhendi",
-"Heru",
-"ILHAM MAULANA",
-"Ipda Sulastina",
-"Ir. Ade Ruslan",
-"Irma Maulani",
-"Ismi Fajarina Isnaeni",
-"Kiki Taskiyah",
-"M. RAMADHANY PUTRA. R",
-"M. Rifki Ilham Sani",
-"MUHAMAD FIRMANSYAH",
-"Muhamad Nurhamzah",
-"MUHAMAD RIAN HIDAYAT",
-"MUHAMMAD HENDRY KUSUMA",
-"Nanda Nadia Elisa",
-"Neli Nur Ramdhani",
-"Pepen Parlos Nasution",
-"Prida Kusuma",
-"RAFLY KAEZA RAMADHAN",
-"Ratna Suminar",
-"Robi Mulya Gunawan",
-"Rohman",
-"Rohman Hidayat",
-"Roni Gandi",
-"Siska Ambarwaty Ramdhan",
-"Siti Rohimah",
-"SITI SARAH",
-"TABAH SAPUTRA WIBISONO",
-"Tuti Anggraeni",
-"Widya Khaerul Bariyyah",
-"Winda Sulastri"
+if(!localStorage.getItem("masterGuru")) localStorage.setItem("masterGuru", JSON.stringify(defaultGuru));
+if(!localStorage.getItem("masterKelas")) localStorage.setItem("masterKelas", JSON.stringify(defaultKelas));
 
-];
-
-let guruHadir=[];
-let dataKelas=[];
-
-function showPage(id){
-
-document.querySelectorAll(".page").forEach(function(x){
-
-x.classList.remove("active");
-
-});
-
-document.getElementById(id).classList.add("active");
-
+// Sidebar Engine
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("sidebarOverlay").classList.toggle("show");
 }
 
+function navTo(id, event) {
+  document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  
+  document.querySelectorAll(".sidebar a").forEach(x => x.classList.remove("active-menu"));
+  
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.add("active-menu");
+  }
+  
+  if(id === 'rekap') muatRekap();
+  toggleSidebar();
+}
+
+function switchMasterTab(tabId, event) {
+  document.querySelectorAll(".master-content").forEach(x => x.style.display = "none");
+  document.getElementById(tabId).style.display = "block";
+  document.querySelectorAll("#masterTabs .nav-link").forEach(btn => btn.classList.remove("active"));
+  
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.add("active");
+  }
+}
+
+// Master Dropdown Kelas Selector
+function renderKelasDropdown() {
+  let select = document.getElementById("kelasSelect");
+  if(!select) return;
+  select.innerHTML = "";
+  daftarKelas.sort().forEach(k => {
+    let opt = document.createElement("option");
+    opt.text = k;
+    select.add(opt);
+  });
+}
+
+// Fitur Tambah Hapus Guru & Kelas Master
+function renderMasterGuru(){
+  let html = '<ul class="list-group">';
+  daftarGuru.sort().forEach((nama, i) => {
+    html += `<li class="list-group-item d-flex justify-content-between align-items-center py-1" style="font-size:13px;">${nama}<button class="btn btn-sm text-danger" onclick="hapusMasterGuru(${i})">&times;</button></li>`;
+  });
+  document.getElementById("listMasterGuru").innerHTML = html + '</ul>';
+}
+
+function tambahMasterGuru(){
+  let nama = document.getElementById("namaGuruBaru").value.trim();
+  if(!nama) return alert("Ketik nama guru!");
+  daftarGuru.push(nama);
+  localStorage.setItem("masterGuru", JSON.stringify(daftarGuru));
+  document.getElementById("namaGuruBaru").value = "";
+  renderMasterGuru(); renderGuru();
+}
+
+function hapusMasterGuru(i){
+  if(confirm("Hapus guru ini?")){
+    daftarGuru.splice(i, 1);
+    localStorage.setItem("masterGuru", JSON.stringify(daftarGuru));
+    renderMasterGuru(); renderGuru();
+  }
+}
+
+function renderMasterKelas(){
+  let html = '<ul class="list-group">';
+  daftarKelas.sort().forEach((kls, i) => {
+    html += `<li class="list-group-item d-flex justify-content-between align-items-center py-1" style="font-size:13px;">${kls}<button class="btn btn-sm text-danger" onclick="hapusMasterKelas(${i})">&times;</button></li>`;
+  });
+  document.getElementById("listMasterKelas").innerHTML = html + '</ul>';
+}
+
+function tambahMasterKelas(){
+  let kls = document.getElementById("namaKelasBaru").value.trim();
+  if(!kls) return alert("Ketik nama kelas!");
+  daftarKelas.push(kls);
+  localStorage.setItem("masterKelas", JSON.stringify(daftarKelas));
+  document.getElementById("namaKelasBaru").value = "";
+  renderMasterKelas(); renderKelasDropdown(); tampilKelas();
+}
+
+function hapusMasterKelas(i){
+  if(confirm("Hapus kelas ini?")){
+    daftarKelas.splice(i, 1);
+    localStorage.setItem("masterKelas", JSON.stringify(daftarKelas));
+    renderMasterKelas(); renderKelasDropdown(); tampilKelas();
+  }
+}
+
+// Absensi Guru Hadir
 function renderGuru(){
-
-let hadir=JSON.parse(localStorage.getItem("guruHadir"))||[];
-
-let html="";
-
-daftarGuru.forEach(function(nama){
-
-let cek=hadir.includes(nama)?"checked":"";
-
-html+=`
-
-<div class="form-check">
-
-<input
-type="checkbox"
-class="form-check-input guruCheck"
-value="${nama}"
-${cek}>
-
-<label class="form-check-label">
-
-${nama}
-
-</label>
-
-</div>
-
-`;
-
-});
-
-document.getElementById("daftarGuru").innerHTML=html;
-
+  let hadir=JSON.parse(localStorage.getItem("guruHadir"))||[];
+  let html="";
+  daftarGuru.sort().forEach(nama => {
+    let cek=hadir.includes(nama)?"checked":"";
+    html+=`<div class="form-check"><input type="checkbox" class="form-check-input guruCheck" value="${nama}" ${cek}><label class="form-check-label">${nama}</label></div>`;
+  });
+  document.getElementById("daftarGuru").innerHTML=html;
 }
-
-// ================= SIMPAN GURU HADIR =================
 
 document.getElementById("btnSimpanGuru").onclick=function(){
-
-guruHadir=[];
-
-document.querySelectorAll(".guruCheck").forEach(function(item){
-
-if(item.checked){
-
-guruHadir.push(item.value);
-
+  let guruHadir=[];
+  document.querySelectorAll(".guruCheck").forEach(item => { if(item.checked) guruHadir.push(item.value); });
+  localStorage.setItem("guruHadir",JSON.stringify(guruHadir));
+  updateDashboard();
+  alert("Data kehadiran guru disimpan!");
 }
 
+document.getElementById("cariGuru").addEventListener("keyup", function(){
+  let cari=this.value.toLowerCase();
+  let html="";
+  let hadir=JSON.parse(localStorage.getItem("guruHadir"))||[];
+  daftarGuru.forEach(nama => {
+    if(nama.toLowerCase().includes(cari)){
+      let cek=hadir.includes(nama)?"checked":"";
+      html+=`<div class="form-check"><input type="checkbox" class="form-check-input guruCheck" value="${nama}" ${cek}><label class="form-check-label">${nama}</label></div>`;
+    }
+  });
+  document.getElementById("daftarGuru").innerHTML=html;
 });
 
-localStorage.setItem("guruHadir",JSON.stringify(guruHadir));
-
-document.getElementById("totalGuru").innerHTML=guruHadir.length;
-
-alert("Data guru hadir berhasil disimpan.");
-
-}
-
-// ================= CARI GURU (VERSI BARU) =================
-
-document.getElementById("cariGuru").addEventListener("keyup",filterGuru);
-
-function filterGuru(){
-
-let cari=document.getElementById("cariGuru").value.toLowerCase();
-
-let html="";
-
-let hadir=JSON.parse(localStorage.getItem("guruHadir"))||[];
-
-daftarGuru.forEach(function(nama){
-
-if(nama.toLowerCase().includes(cari)){
-
-let cek=hadir.includes(nama)?"checked":"";
-
-html+=`
-
-<div class="form-check">
-
-<input
-type="checkbox"
-class="form-check-input guruCheck"
-value="${nama}"
-${cek}>
-
-<label class="form-check-label">
-
-${nama}
-
-</label>
-
-</div>
-
-`;
-
-}
-
-});
-
-document.getElementById("daftarGuru").innerHTML=html;
-
-}
-
-// ================= PEMBAGIAN KELAS =================
-
+// Transaksi Kelas
 document.getElementById("btnTambahKelas").onclick=function(){
+  let kelas=document.getElementById("kelasSelect").value;
+  let jumlah=parseInt(document.getElementById("jumlahOmpreng").value);
+  if(isNaN(jumlah)||jumlah<=0) return alert("Ketik jumlah ompreng.");
 
-let kelas=document.getElementById("kelasSelect").value;
-let jumlah=parseInt(document.getElementById("jumlahOmpreng").value);
+  let data=JSON.parse(localStorage.getItem("dataKelas"))||[];
+  if(data.find(x => x.kelas === kelas)) return alert("Kelas ini sudah di-input!");
 
-if(isNaN(jumlah)||jumlah<=0){
-
-alert("Masukkan jumlah ompreng.");
-
-return;
-
+  data.push({ kelas:kelas, jumlah:jumlah, catatan:"", ambil:false, kembali:false, tanggal:new Date().toLocaleString() });
+  localStorage.setItem("dataKelas",JSON.stringify(data));
+  document.getElementById("jumlahOmpreng").value="";
+  tampilKelas(); updateDashboard(); hitungLogistik();
 }
-
-let data=JSON.parse(localStorage.getItem("dataKelas"))||[];
-
-data.push({
-
-kelas:kelas,
-jumlah:jumlah,
-ambil:false,
-kembali:false,
-tanggal:new Date().toLocaleString()
-
-});
-
-localStorage.setItem("dataKelas",JSON.stringify(data));
-
-document.getElementById("jumlahOmpreng").value="";
-
-tampilKelas();
-
-updateDashboard();
-
-}
-
-// ================= TAMPIL DATA KELAS =================
 
 function tampilKelas(){
+  let data=JSON.parse(localStorage.getItem("dataKelas"))||[];
+  let html="";
+  let bAmbil = []; let bKembali = [];
+  let kSudah = data.map(x => x.kelas);
+  let bInput = daftarKelas.filter(x => !kSudah.includes(x));
 
-let data=JSON.parse(localStorage.getItem("dataKelas"))||[];
+  data.forEach((item, index) => {
+    if(!item.ambil) bAmbil.push(item.kelas);
+    if(!item.kembali) bKembali.push(item.kelas);
+    html += `
+      <div class="item">
+        <b>${item.kelas}</b> (Ompreng: ${item.jumlah})<br>
+        <label class="me-3"><input type="checkbox" ${item.ambil?"checked":""} onchange="ubahAmbil(${index},this.checked)"> Diambil</label>
+        <label><input type="checkbox" ${item.kembali?"checked":""} onchange="ubahKembali(${index},this.checked)"> Dikembalikan</label>
+        <div class="input-group input-group-sm mt-2">
+          <input type="text" id="note-${index}" class="form-control" placeholder="Catatan..." value="${item.catatan||''}">
+          <button class="btn btn-secondary" onclick="simpanCatatan(${index})">💾</button>
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById("listKelas").innerHTML = html;
+  document.getElementById("countBelumInput").innerText = bInput.length;
+  document.getElementById("countBelumAmbil").innerText = bAmbil.length;
+  document.getElementById("countBelumKembali").innerText = bKembali.length;
 
-let html="";
-
-data.forEach(function(item,index){
-
-html+=`
-
-<div class="item">
-
-<b>${item.kelas}</b><br>
-
-Ompreng : <b>${item.jumlah}</b><br>
-
-<label>
-
-<input
-type="checkbox"
-${item.ambil?"checked":""}
-onchange="ubahAmbil(${index},this.checked)">
-
- Sudah Diambil
-
-</label>
-
-<br>
-
-<label>
-
-<input
-type="checkbox"
-${item.kembali?"checked":""}
-onchange="ubahKembali(${index},this.checked)">
-
- Sudah Dikembalikan
-
-</label>
-
-</div>
-
-`;
-
-});
-
-document.getElementById("listKelas").innerHTML=html;
-
+  document.getElementById("listBelumInput").innerHTML = "<b>Belum Input:</b> " + (bInput.length ? bInput.join(", ") : "-");
+  document.getElementById("listBelumAmbil").innerHTML = "<b>Belum Ambil:</b> " + (bAmbil.length ? bAmbil.join(", ") : "-");
+  document.getElementById("listBelumKembali").innerHTML = "<b>Belum Kembali:</b> " + (bKembali.length ? bKembali.join(", ") : "-");
 }
 
-// ================= CHECKLIST AMBIL =================
-
-function ubahAmbil(index,status){
-
-let data=JSON.parse(localStorage.getItem("dataKelas"))||[];
-
-data[index].ambil=status;
-
-localStorage.setItem("dataKelas",JSON.stringify(data));
-
+function simpanCatatan(i){
+  let data=JSON.parse(localStorage.getItem("dataKelas"))||[];
+  data[i].catatan = document.getElementById(`note-${i}`).value;
+  localStorage.setItem("dataKelas",JSON.stringify(data));
+  alert("Catatan disimpan!");
+  tampilKelas();
 }
+function ubahAmbil(i,s){ let d=JSON.parse(localStorage.getItem("dataKelas"))||[]; d[i].ambil=s; localStorage.setItem("dataKelas",JSON.stringify(d)); tampilKelas(); }
+function ubahKembali(i,s){ let d=JSON.parse(localStorage.getItem("dataKelas"))||[]; d[i].kembali=s; localStorage.setItem("dataKelas",JSON.stringify(d)); tampilKelas(); }
 
-// ================= CHECKLIST KEMBALI =================
-
-function ubahKembali(index,status){
-
-let data=JSON.parse(localStorage.getItem("dataKelas"))||[];
-
-data[index].kembali=status;
-
-localStorage.setItem("dataKelas",JSON.stringify(data));
-
+// Logistik & Hitung Guru
+function simpanStokMasuk(){ localStorage.setItem("stokMasuk", parseInt(document.getElementById("stokMasuk").value)||0); hitungLogistik(); alert("Stok katering disimpan!"); }
+function hitungLogistik(){
+  let masuk = parseInt(localStorage.getItem("stokMasuk")) || 0;
+  let stokInput = document.getElementById("stokMasuk");
+  if(stokInput) stokInput.value = masuk;
+  let data=JSON.parse(localStorage.getItem("dataKelas"))||[];
+  let terpakai = 0; data.forEach(x => terpakai += Number(x.jumlah));
+  document.getElementById("logMasuk").innerText = masuk;
+  document.getElementById("logKelas").innerText = terpakai;
+  document.getElementById("logSisa").innerText = masuk - terpakai;
 }
-
-// ================= DASHBOARD =================
-
-function updateDashboard(){
-
-let data=JSON.parse(localStorage.getItem("dataKelas"))||[];
-
-let totalPembagian=data.length;
-
-let totalOmpreng=0;
-
-data.forEach(function(item){
-
-totalOmpreng+=Number(item.jumlah);
-
-});
-
-document.getElementById("totalPembagian").innerHTML=totalPembagian;
-
-document.getElementById("totalOmpreng").innerHTML=totalOmpreng;
-
-let hadir=JSON.parse(localStorage.getItem("guruHadir"))||[];
-
-document.getElementById("totalGuru").innerHTML=hadir.length;
-
-}
-
-
-// ================= LOAD AWAL =================
-
-window.onload=function(){
-
-// Load guru hadir
-guruHadir=JSON.parse(localStorage.getItem("guruHadir"))||[];
-
-// Tampilkan daftar guru
-renderGuru();
-
-// Tampilkan data kelas
-tampilKelas();
-
-// Tampilkan riwayat
-tampilRiwayat();
-
-// Update dashboard
-updateDashboard();
-
-}
-
-// ================= HITUNG PEMBAGIAN GURU =================
 
 document.getElementById("btnHitung").onclick=function(){
+  let sisa=parseInt(document.getElementById("sisaOmpreng").value);
+  let hadir=JSON.parse(localStorage.getItem("guruHadir"))||[];
+  if(isNaN(sisa) || !hadir.length) return alert("Periksa sisa ompreng atau absensi guru hadir.");
 
-let sisa=parseInt(document.getElementById("sisaOmpreng").value);
+  let jatah=Math.floor(sisa/hadir.length);
+  let sisaLebih=sisa%hadir.length;
 
-if(isNaN(sisa)||sisa<=0){
+  let html=`<div class="alert alert-success">Guru Hadir: ${hadir.length} | Jatah: <b>${jatah}</b> | Lebih: ${sisaLebih}</div>`;
+  let statusG = JSON.parse(localStorage.getItem("statusGuruAmbil")) || {};
 
-alert("Masukkan jumlah sisa ompreng.");
-
-return;
-
+  hadir.forEach((nama, index) => {
+    let isA = statusG[nama]?.ambil ? "checked" : "";
+    let isK = statusG[nama]?.kembali ? "checked" : "";
+    html += `
+      <div class="item">
+        <b>${index+1}. ${nama}</b><br>
+        <label class="me-3"><input type="checkbox" ${isA} onchange="ubahStatusGuru('${nama}', 'ambil', this.checked)"> Ambil</label>
+        <label><input type="checkbox" ${isK} onchange="ubahStatusGuru('${nama}', 'kembali', this.checked)"> Kembali</label>
+      </div>
+    `;
+  });
+  document.getElementById("hasilPembagianGuru").innerHTML = html;
+  document.getElementById("ringkasanGuruBox").style.display = "block";
+  updateRingkasanGuru();
+  
+  // Simpan Riwayat
+  let riwayat=JSON.parse(localStorage.getItem("riwayatGuru"))||[];
+  riwayat.unshift({ tanggal:new Date().toLocaleString(), guru:hadir.length, ompreng:sisa, jatah:jatah });
+  localStorage.setItem("riwayatGuru", JSON.stringify(riwayat));
+  tampilRiwayat();
 }
 
-let hadir=JSON.parse(localStorage.getItem("guruHadir"))||[];
-
-if(hadir.length==0){
-
-alert("Belum ada guru yang hadir.");
-
-return;
-
+function ubahStatusGuru(nama, tipe, status){
+  let statusG = JSON.parse(localStorage.getItem("statusGuruAmbil")) || {};
+  if(!statusG[nama]) statusG[nama] = { ambil: false, kembali: false };
+  statusG[nama][tipe] = status;
+  localStorage.setItem("statusGuruAmbil", JSON.stringify(statusG));
+  updateRingkasanGuru();
 }
 
-let jatah=Math.floor(sisa/hadir.length);
-
-let sisaOmpreng=sisa%hadir.length;
-
-let html="";
-
-html+=`
-<div class="alert alert-success">
-<b>Guru Hadir :</b> ${hadir.length}<br>
-<b>Jatah / Orang :</b> ${jatah}<br>
-<b>Sisa Ompreng :</b> ${sisaOmpreng}
-</div>
-`;
-
-hadir.forEach(function(nama,index){
-
-html+=`
-
-<div class="item">
-
-<b>${index+1}. ${nama}</b>
-
-<br><br>
-
-<div class="form-check">
-
-<input
-class="form-check-input"
-type="checkbox"
-id="ambil${index}">
-
-<label class="form-check-label">
-
-Sudah Ambil
-
-</label>
-
-</div>
-
-<div class="form-check">
-
-<input
-class="form-check-input"
-type="checkbox"
-id="kembali${index}">
-
-<label class="form-check-label">
-
-Sudah Kembali
-
-</label>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-document.getElementById("hasilPembagianGuru").innerHTML=html;
-simpanRiwayatGuru();
-
+function updateRingkasanGuru(){
+  let hadir=JSON.parse(localStorage.getItem("guruHadir"))||[];
+  let statusG = JSON.parse(localStorage.getItem("statusGuruAmbil")) || {};
+  let bAmbil = []; let bKembali = [];
+  hadir.forEach(n => {
+    if(!statusG[n]?.ambil) bAmbil.push(n);
+    if(!statusG[n]?.kembali) bKembali.push(n);
+  });
+  document.getElementById("countGuruBelumAmbil").innerText = bAmbil.length;
+  document.getElementById("countGuruBelumKembali").innerText = bKembali.length;
+  document.getElementById("listGuruBelumAmbil").innerHTML = "<b>Belum Ambil:</b> " + (bAmbil.length ? bAmbil.join(", ") : "-");
+  document.getElementById("listGuruBelumKembali").innerHTML = "<b>Belum Kembali:</b> " + (bKembali.length ? bKembali.join(", ") : "-");
 }
 
-// ================= RESET DATA =================
+// Rekap Report + Catatan Kelas
+function muatRekap(){
+  let dataK=JSON.parse(localStorage.getItem("dataKelas"))||[];
+  let kSudah = dataK.map(x => x.kelas);
+  let bInput = daftarKelas.filter(x => !kSudah.includes(x));
+  let bAmbil = dataK.filter(x => !x.ambil);
+  let bKembali = dataK.filter(x => !x.kembali);
 
-document.getElementById("btnReset").onclick=function(){
+  let txtKelas = `• Belum Input (${bInput.length} Kelas):\n  ${bInput.length?bInput.join(', '):'-'}\n`;
+  txtKelas += `• Belum Ambil (${bAmbil.length} Kelas):\n  ${bAmbil.length?bAmbil.map(x=>x.kelas).join(', '):'-'}\n`;
+  txtKelas += `• Belum Kembali (${bKembali.length} Kelas):\n  ${bKembali.length?bKembali.map(x=>x.kelas).join(', '):'-'}\n\n`;
+  
+  txtKelas += `📝 DETAIL TRANSAKSI & CATATAN KELAS:\n`;
+  if(dataK.length) {
+    dataK.forEach(x => {
+      txtKelas += `  - ${x.kelas} [${x.jumlah} Pcs] -> (Ambil: ${x.ambil?'✓':'✗'}, Kembali: ${x.kembali?'✓':'✗'})\n    Catatan: ${x.catatan || '-'}\n`;
+    });
+  } else {
+    txtKelas += `  (Belum ada data kelas yang diinput hari ini)`;
+  }
+  document.getElementById("rekapKelasText").innerText = txtKelas;
 
-if(!confirm("Yakin ingin menghapus semua data?")){
-return;
+  let hadir=JSON.parse(localStorage.getItem("guruHadir"))||[];
+  let statusG = JSON.parse(localStorage.getItem("statusGuruAmbil")) || {};
+  let gBAmbil = []; let gBKembali = [];
+  hadir.forEach(n => {
+    if(!statusG[n]?.ambil) gBAmbil.push(n);
+    if(!statusG[n]?.kembali) gBKembali.push(n);
+  });
+  let txtGuru = `Total Guru Hadir: ${hadir.length} Orang\n`;
+  txtGuru += `• Belum Ambil Jatah (${gBAmbil.length} Orang):\n  ${gBAmbil.length?gBAmbil.join(', '):'-'}\n`;
+  txtGuru += `• Belum Mengembalikan (${gBKembali.length} Orang):\n  ${gBKembali.length?gBKembali.join(', '):'-'}`;
+  document.getElementById("rekapGuruText").innerText = txtGuru;
 }
 
-localStorage.removeItem("dataKelas");
-localStorage.removeItem("guruHadir");
-localStorage.removeItem("riwayatGuru");
-
-document.getElementById("hasilPembagianGuru").innerHTML="";
-document.getElementById("isiRiwayat").innerHTML="";
-document.getElementById("listKelas").innerHTML="";
-document.getElementById("jumlahOmpreng").value="";
-document.getElementById("sisaOmpreng").value="";
-
-updateDashboard();
-renderGuru();
-
-alert("Semua data berhasil dihapus.");
-
+function updateDashboard(){
+  let data=JSON.parse(localStorage.getItem("dataKelas"))||[];
+  let totalOmpreng=0; data.forEach(x => totalOmpreng+=Number(x.jumlah));
+  document.getElementById("totalPembagian").innerText = data.length;
+  document.getElementById("totalOmpreng").innerText = totalOmpreng;
+  document.getElementById("totalGuru").innerText = (JSON.parse(localStorage.getItem("guruHadir"))||[]).length;
 }
-
-// ================= SIMPAN RIWAYAT GURU =================
-
-function simpanRiwayatGuru(){
-
-let hadir=JSON.parse(localStorage.getItem("guruHadir"))||[];
-
-let sisa=parseInt(document.getElementById("sisaOmpreng").value);
-
-let jatah=Math.floor(sisa/hadir.length);
-
-let data=JSON.parse(localStorage.getItem("riwayatGuru"))||[];
-
-data.unshift({
-
-tanggal:new Date().toLocaleString(),
-
-guru:hadir.length,
-
-ompreng:sisa,
-
-jatah:jatah
-
-});
-
-localStorage.setItem("riwayatGuru",JSON.stringify(data));
-
-tampilRiwayat();
-
-}
-
-// ================= TAMPIL RIWAYAT =================
 
 function tampilRiwayat(){
-
-let data=JSON.parse(localStorage.getItem("riwayatGuru"))||[];
-
-let html="";
-
-if(data.length==0){
-
-html="<div class='alert alert-secondary'>Belum ada riwayat.</div>";
-
-}else{
-
-data.forEach(function(item){
-
-html+=`
-
-<div class="item">
-
-<b>${item.tanggal}</b>
-
-<br>
-
-Guru Hadir : ${item.guru}
-
-<br>
-
-Ompreng : ${item.ompreng}
-
-<br>
-
-Jatah / Orang : ${item.jatah}
-
-</div>
-
-`;
-
-});
-
+  let data=JSON.parse(localStorage.getItem("riwayatGuru"))||[];
+  let html = "";
+  if (data && data.length > 0) {
+    data.forEach(x => { 
+      html += `<div class="item"><b>${x.tanggal}</b><br>Guru: ${x.guru} orang | Total: ${x.ompreng} Pcs | Jatah: ${x.jatah} Pcs</div>`; 
+    });
+  } else {
+    html = "<div class='alert alert-secondary'>Belum ada riwayat.</div>";
+  }
+  document.getElementById("isiRiwayat").innerHTML = html;
 }
 
-document.getElementById("isiRiwayat").innerHTML=html;
+// FUNGSI RESET HARIAN YANG DIJAMIN BEBAS ERROR DAN BERFUNGSI 100%
+function jalankanResetHarian(){
+  if(!confirm("Apakah Anda yakin ingin menghapus semua data transaksi hari ini? Data MASTER GURU dan MASTER KELAS dipastikan tetap AMAN dan tidak akan terhapus.")) {
+    return;
+  }
+  
+  // Ambil data Master terlebih dahulu untuk mengamankannya
+  const masterGuruSaves = localStorage.getItem("masterGuru");
+  const masterKelasSaves = localStorage.getItem("masterKelas");
+  
+  // Bersihkan LocalStorage harian
+  localStorage.removeItem("dataKelas"); 
+  localStorage.removeItem("guruHadir");
+  localStorage.removeItem("riwayatGuru"); 
+  localStorage.removeItem("statusGuruAmbil"); 
+  localStorage.removeItem("stokMasuk");
+  
+  // Kembalikan data Master agar tetap utuh
+  if(masterGuruSaves) {
+    localStorage.setItem("masterGuru", masterGuruSaves);
+  } else {
+    localStorage.setItem("masterGuru", JSON.stringify(defaultGuru));
+  }
+  
+  if(masterKelasSaves) {
+    localStorage.setItem("masterKelas", masterKelasSaves);
+  } else {
+    localStorage.setItem("masterKelas", JSON.stringify(defaultKelas));
+  }
+  
+  alert("Reset berhasil! Semua data transaksi harian telah dibersihkan.");
+  
+  // Reload untuk merefresh tampilan dashboard, logistik, dan rekap ke kondisi awal kosong
+  location.reload();
+}
 
+window.onload=function(){
+  renderKelasDropdown(); 
+  renderGuru(); 
+  renderMasterGuru(); 
+  renderMasterKelas();
+  tampilKelas(); 
+  tampilRiwayat(); 
+  updateDashboard(); 
+  hitungLogistik();
 }
 </script>
-
 </body>
-
-</html
+</html>
